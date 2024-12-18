@@ -9,7 +9,7 @@ using AngularWithASP.Server.Models;
 
 namespace AngularWithASP.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/transactions")]
     [ApiController]
     public class TransactionsController : ControllerBase
     {
@@ -20,14 +20,14 @@ namespace AngularWithASP.Server.Controllers
             _context = context;
         }
 
-        // GET: api/Transactions
+        // GET: api/transactions
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
         {
             return await _context.Transactions.ToListAsync();
         }
 
-        // GET: api/Transactions/5
+        // GET: api/transactions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Transaction>> GetTransaction(long id)
         {
@@ -41,7 +41,7 @@ namespace AngularWithASP.Server.Controllers
             return transaction;
         }
 
-        // PUT: api/Transactions/5
+        // PUT: api/transactions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTransaction(long id, Transaction transaction)
@@ -72,7 +72,7 @@ namespace AngularWithASP.Server.Controllers
             return NoContent();
         }
 
-        // POST: api/Transactions
+        // POST: api/transactions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Transaction>> PostTransaction(Transaction transaction)
@@ -83,7 +83,7 @@ namespace AngularWithASP.Server.Controllers
             return CreatedAtAction(nameof(GetTransaction), new { id = transaction.Id }, transaction);
         }
 
-        // DELETE: api/Transactions/5
+        // DELETE: api/transactions/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTransaction(long id)
         {
