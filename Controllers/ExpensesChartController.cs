@@ -28,9 +28,11 @@ namespace AngularWithASP.Server.Controllers
             }
 
             // Use LINQ to get ExpensesChart data list
-            IQueryable<string> categoryQuery = from t in _context.Transactions
-                                               select t.Category;
-            var categories = await categoryQuery.Distinct().ToListAsync();
+            var categories = await _context.Transactions
+                                .Select(t => t.Category)
+                                .Distinct()
+                                .ToListAsync();
+
             var expensesChartData = new List<ExpensesChart>();
 
             foreach (var category in categories) {
