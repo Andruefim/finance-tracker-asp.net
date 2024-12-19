@@ -9,17 +9,17 @@ using AngularWithASP.Server.Models;
 
 namespace AngularWithASP.Server.Controllers
 {
-    [Route("api/dashboard/expenses-chart")]
+    //[Route("api/transactions/charts/")]
     [ApiController]
-    public class ExpensesChartController : ControllerBase
+    public class TransactionsChartsController : ControllerBase
     {
         private readonly TransactionsContext _context;
 
-        public ExpensesChartController(TransactionsContext context) {
+        public TransactionsChartsController(TransactionsContext context) {
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("api/transactions/charts/expenses-chart")]
         public async Task<ActionResult<IEnumerable<ExpensesChart>>> GetExpensesChart()
         {
             if (_context.Transactions == null)
