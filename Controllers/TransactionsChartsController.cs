@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AngularWithASP.Server.Models;
+using AngularWithASP.Server.Data;
 
 namespace AngularWithASP.Server.Controllers
 {

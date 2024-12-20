@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using AngularWithASP.Server.Models;
+using AngularWithASP.Server.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +13,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    SeedData.Initialize(services);
+}
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
