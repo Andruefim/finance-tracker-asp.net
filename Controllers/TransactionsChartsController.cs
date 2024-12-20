@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AngularWithASP.Server.Models;
 using AngularWithASP.Server.Data;
+using AngularWithASP.Server.Services;
 
 namespace AngularWithASP.Server.Controllers
 {
@@ -15,41 +16,27 @@ namespace AngularWithASP.Server.Controllers
     public class TransactionsChartsController : ControllerBase
     {
         private readonly TransactionsContext _context;
+        private readonly ITransactionsChartsService _transactionsChartsService;
 
-        public TransactionsChartsController(TransactionsContext context) {
+        public TransactionsChartsController(
+            TransactionsContext context,
+            ITransactionsChartsService transactionsChartsService
+        ) {
             _context = context;
+            _transactionsChartsService = transactionsChartsService;
         }
 
         [HttpGet("api/transactions/charts/expenses-chart")]
         public async Task<ActionResult<IEnumerable<ExpensesChart>>> GetExpensesChart()
         {
-            if (_context.Transactions == null)
+            var expensesChartData = await _transactionsChartsService.GetExpensesChartData();
+
+            if (expensesChartData.Count == 0)
             {
-                return Problem("Entity set TransactionsContext.Transactions is null.");
+                return NotFound("No transactions found");
             }
 
-            // Use LINQ to get ExpensesChart data list
-            var categories = await _context.Transactions
-                                .Select(t => t.Category)
-                                .Distinct()
-                                .ToListAsync();
-
-            var expensesChartData = new List<ExpensesChart>();
-
-            foreach (var category in categories) {
-                expensesChartData
-                    .Add(
-                        new ExpensesChart 
-                            { 
-                                Category = category,
-                                Amount = _context.Transactions
-                                    .Where(t => t.Category == category && t.Amount < 0)
-                                    .Sum(t => Math.Abs(t.Amount))
-                            }
-                    );
-            }
-
-            return expensesChartData.ToList();
+            return Ok(expensesChartData);
         }
     }
 }

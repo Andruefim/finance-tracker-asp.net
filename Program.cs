@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using AngularWithASP.Server.Data;
+using AngularWithASP.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddDbContext<TransactionsContext>(opt =>
     opt.UseInMemoryDatabase("TransactionsList"));
+builder.Services.AddScoped<ITransactionsChartsService, TransactionsChartsService>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
