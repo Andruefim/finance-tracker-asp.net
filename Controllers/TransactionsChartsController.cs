@@ -26,10 +26,23 @@ namespace AngularWithASP.Server.Controllers
             _transactionsChartsService = transactionsChartsService;
         }
 
+        [HttpGet("/api/transactions/charts/transactions-chart")]
+        public async Task<ActionResult<IEnumerable<TransactionsChart>>> GetTransactionsChart()
+        {
+            var transactionsChartData = await _transactionsChartsService.GetTransactionsChartAsync();
+
+            if (transactionsChartData.Count == 0)
+            {
+                return NotFound("No transactions found");
+            }
+
+            return Ok(transactionsChartData);
+        }
+
         [HttpGet("api/transactions/charts/expenses-chart")]
         public async Task<ActionResult<IEnumerable<ExpensesChart>>> GetExpensesChart()
         {
-            var expensesChartData = await _transactionsChartsService.GetExpensesChartData();
+            var expensesChartData = await _transactionsChartsService.GetExpensesChartAsync();
 
             if (expensesChartData.Count == 0)
             {

@@ -7,12 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AngularWithASP.Server.Models;
 using AngularWithASP.Server.Data;
+using System.Runtime.CompilerServices;
+using Microsoft.OpenApi.Any;
 
 namespace AngularWithASP.Server.Services;
 
 public interface ITransactionsChartsService
 {
-    Task<List<ExpensesChart>> GetExpensesChartData();
+    Task<List<TransactionsChart>> GetTransactionsChartAsync();
+    Task<List<ExpensesChart>> GetExpensesChartAsync();
 }
 
 public class TransactionsChartsService : ITransactionsChartsService
@@ -22,7 +25,50 @@ public class TransactionsChartsService : ITransactionsChartsService
     public TransactionsChartsService(TransactionsContext context) { 
         _context = context;
     }
-    public async Task<List<ExpensesChart>> GetExpensesChartData()
+
+    public async Task<List<TransactionsChart>> GetTransactionsChartAsync()
+    { 
+        var transactionsChart = new List<TransactionsChart>();
+
+        if (_context.Transactions == null)
+        { 
+            return transactionsChart;
+        }
+
+        // Use LINQ to get TransactionsChart data list
+        var transactions = from t in _context.Transactions
+                           select t;
+
+        var incomeTransactionsData = await _context.Transactions
+            .Where(t => t.Amount >= 0)
+            .Select(t => new TransactionsChartData { date = t.Date, amount = t.Amount })
+            .ToListAsync();
+
+        var expensesTransactionsData = await _context.Transactions
+            .Where(t => t.Amount <= 0)
+            .Select(t => new TransactionsChartData { date = t.Date, amount = Math.Abs(t.Amount) })
+            .ToListAsync();
+
+        transactionsChart.Add(
+            new TransactionsChart
+            {
+                Type = "Income",
+                Data = incomeTransactionsData
+            }
+        );
+
+        transactionsChart.Add(
+            new TransactionsChart
+            { 
+                Type = "Expenses",
+                Data = expensesTransactionsData
+            }
+        );
+
+        return transactionsChart;
+    }
+
+    public async Task<List<ExpensesChart>> GetExpensesChartAsync()
     {
         var expensesChartData = new List<ExpensesChart>();
 
