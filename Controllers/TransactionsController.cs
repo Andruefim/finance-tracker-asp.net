@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AngularWithASP.Server.Models;
 using AngularWithASP.Server.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AngularWithASP.Server.Controllers
 {
+    [Authorize]
     [Route("api/transactions")]
     [ApiController]
     public class TransactionsController : ControllerBase

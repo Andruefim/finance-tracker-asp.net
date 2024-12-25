@@ -8,10 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using AngularWithASP.Server.Models;
 using AngularWithASP.Server.Data;
 using AngularWithASP.Server.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AngularWithASP.Server.Controllers
 {
     //[Route("api/transactions/charts/")]
+    [Authorize]
     [ApiController]
     public class TransactionsChartsController : ControllerBase
     {
