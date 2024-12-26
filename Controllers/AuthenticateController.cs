@@ -45,7 +45,9 @@ namespace AngularWithASP.Server.Controllers
             return Ok(new 
             { 
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = token.ValidTo
+                expiration = token.ValidTo,
+                email = user.Email,
+                username = user.UserName,
             });
         }
 
@@ -69,7 +71,37 @@ namespace AngularWithASP.Server.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            return Ok("User registered successfully");
+            return Ok(new { message = "User registered successfully" });
+        }
+
+        [HttpGet("user")]
+        public async Task<IActionResult> GetUser()
+        {
+            if (User.Identity is null || !User.Identity.IsAuthenticated)
+            {
+                return Unauthorized("User is not authenticated");
+            }
+
+            // Get the user's email from the claims
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+            if (userEmail == null) 
+            {
+                return Unauthorized("Email claim is missing");
+            }
+
+            // Fetch the user from the database
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null) 
+            { 
+                return NotFound("User not found");
+            }
+
+            // Return the user details
+            return Ok(new
+            {
+                email = user.Email,
+                username = user.UserName,
+            });
         }
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)
