@@ -7,5 +7,6 @@ public class Transaction
     public string? Category { get; set; }
     public long Amount {  get; set; }
     public string? Description { get; set; }
+    public string? UserId { get; set; }
 }
  

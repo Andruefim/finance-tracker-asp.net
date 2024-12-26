@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -39,6 +40,7 @@ namespace AngularWithASP.Server.Controllers
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim("UserId", user.Id)
             };
 
             var token = GetToken(authClaims);
@@ -49,6 +51,7 @@ namespace AngularWithASP.Server.Controllers
                 expiration = token.ValidTo,
                 email = user.Email,
                 username = user.UserName,
+                userId = user.Id,
             });
         }
 
@@ -102,6 +105,7 @@ namespace AngularWithASP.Server.Controllers
             {
                 email = user.Email,
                 username = user.UserName,
+                userId = user.Id
             });
         }
 

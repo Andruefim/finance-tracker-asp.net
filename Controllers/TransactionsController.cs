@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using AngularWithASP.Server.Models;
 using AngularWithASP.Server.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace AngularWithASP.Server.Controllers
 {
@@ -27,7 +29,12 @@ namespace AngularWithASP.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
         {
-            return await _context.Transactions.ToListAsync();
+
+            var userId = User.FindFirstValue("UserId");
+            Console.WriteLine($"Retrieved UserId: {userId}");
+            return await _context.Transactions
+                .Where(x => x.UserId == userId)
+                .ToListAsync();
         }
 
         // GET: api/transactions/5
@@ -80,6 +87,11 @@ namespace AngularWithASP.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Transaction>> PostTransaction(Transaction transaction)
         {
+
+            var userId = User.FindFirstValue("UserId");
+
+            transaction.UserId = userId;
+
             _context.Transactions.Add(transaction);
             await _context.SaveChangesAsync();
 

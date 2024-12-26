@@ -9,6 +9,7 @@ using AngularWithASP.Server.Models;
 using AngularWithASP.Server.Data;
 using AngularWithASP.Server.Services;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace AngularWithASP.Server.Controllers
 {
@@ -31,7 +32,8 @@ namespace AngularWithASP.Server.Controllers
         [HttpGet("/api/transactions/charts/transactions-chart")]
         public async Task<ActionResult<IEnumerable<TransactionsChart>>> GetTransactionsChart()
         {
-            var transactionsChartData = await _transactionsChartsService.GetTransactionsChartAsync();
+            var userId = User.FindFirstValue("UserId");
+            var transactionsChartData = await _transactionsChartsService.GetTransactionsChartAsync(userId);
 
             if (transactionsChartData.Count == 0)
             {
@@ -44,7 +46,8 @@ namespace AngularWithASP.Server.Controllers
         [HttpGet("api/transactions/charts/expenses-chart")]
         public async Task<ActionResult<IEnumerable<ExpensesChart>>> GetExpensesChart()
         {
-            var expensesChartData = await _transactionsChartsService.GetExpensesChartAsync();
+            var userId = User.FindFirstValue("UserId");
+            var expensesChartData = await _transactionsChartsService.GetExpensesChartAsync(userId);
 
             if (expensesChartData.Count == 0)
             {
