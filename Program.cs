@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using AngularWithASP.Server.Data;
 using AngularWithASP.Server.Services;
-using AngularWithASP.Server.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -15,10 +14,8 @@ ConfigurationManager configuration = builder.Configuration;
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<TransactionsContext>(opt =>
-    opt.UseInMemoryDatabase("TransactionsList"));
-builder.Services.AddDbContext<ApplicationDbContext>(opt =>
-    opt.UseInMemoryDatabase("IdentityDatabase"));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<ITransactionsChartsService, TransactionsChartsService>();
 
 // For Identity

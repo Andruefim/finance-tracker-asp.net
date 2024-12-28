@@ -21,9 +21,9 @@ public interface ITransactionsChartsService
 
 public class TransactionsChartsService : ITransactionsChartsService
 {
-    private readonly TransactionsContext _context;
+    private readonly ApplicationDbContext _context;
 
-    public TransactionsChartsService(TransactionsContext context) { 
+    public TransactionsChartsService(ApplicationDbContext context) { 
         _context = context;
     }
 

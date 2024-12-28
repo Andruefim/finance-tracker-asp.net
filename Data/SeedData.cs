@@ -10,9 +10,9 @@ public static class SeedData
 {
     public static void Initialize(IServiceProvider serviceProvider)
     {
-        using (var context = new TransactionsContext(
+        using (var context = new ApplicationDbContext(
             serviceProvider.GetRequiredService<
-                DbContextOptions<TransactionsContext>>()))
+                DbContextOptions<ApplicationDbContext>>()))
         {
             // Look for any transactions.
             if (context.Transactions.Any())

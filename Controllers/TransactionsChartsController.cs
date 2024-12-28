@@ -18,11 +18,11 @@ namespace AngularWithASP.Server.Controllers
     [ApiController]
     public class TransactionsChartsController : ControllerBase
     {
-        private readonly TransactionsContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly ITransactionsChartsService _transactionsChartsService;
 
         public TransactionsChartsController(
-            TransactionsContext context,
+            ApplicationDbContext context,
             ITransactionsChartsService transactionsChartsService
         ) {
             _context = context;

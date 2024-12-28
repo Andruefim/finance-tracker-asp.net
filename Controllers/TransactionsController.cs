@@ -18,9 +18,9 @@ namespace AngularWithASP.Server.Controllers
     [ApiController]
     public class TransactionsController : ControllerBase
     {
-        private readonly TransactionsContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public TransactionsController(TransactionsContext context)
+        public TransactionsController(ApplicationDbContext context)
         {
             _context = context;
         }
