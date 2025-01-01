@@ -18,5 +18,5 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         base.OnModelCreating(builder);
     }
 
-public DbSet<AngularWithASP.Server.Models.Category> Category { get; set; } = default!;
+    public DbSet<Category> Categories { get; set; } = default!;
 }

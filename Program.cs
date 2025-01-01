@@ -17,6 +17,7 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<ITransactionsChartsService, TransactionsChartsService>();
+builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 
 // For Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()

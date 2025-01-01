@@ -14,11 +14,12 @@ public static class SeedData
             serviceProvider.GetRequiredService<
                 DbContextOptions<ApplicationDbContext>>()))
         {
+
             // Look for any transactions.
-            if (context.Transactions.Any())
-            {
-                return; // DB has been seeded
-            }
+            //if (context.Transactions.Any())
+            //{
+            //    return; // DB has been seeded
+            //}
             //context.Transactions.AddRange(
             //    new Transaction
             //    {

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AngularWithASP.Server.Data;
 using AngularWithASP.Server.Models;
+using AngularWithASP.Server.Services;
+using System.Security.Claims;
 
 namespace AngularWithASP.Server.Controllers
 {
@@ -15,24 +17,31 @@ namespace AngularWithASP.Server.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly ICategoriesService _categoriesService;
 
-        public CategoriesController(ApplicationDbContext context)
-        {
+        public CategoriesController(
+            ApplicationDbContext context,
+            ICategoriesService categoriesService
+        ) {
             _context = context;
+            _categoriesService = categoriesService;
         }
 
         // GET: api/Categories
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
         {
-            return await _context.Category.ToListAsync();
+            var userId = User.FindFirstValue("UserId");
+            var categories = await _categoriesService.GetCategoriesAsync(userId);
+
+            return Ok(categories);
         }
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Category>> GetCategory(long id)
         {
-            var category = await _context.Category.FindAsync(id);
+            var category = await _context.Categories.FindAsync(id);
 
             if (category == null)
             {
@@ -47,27 +56,11 @@ namespace AngularWithASP.Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(long id, Category category)
         {
-            if (id != category.Id)
-            {
-                return BadRequest();
-            }
+            var updatedCategory = await _categoriesService.UpdateCategoryAsync(id, category);
 
-            _context.Entry(category).State = EntityState.Modified;
-
-            try
+            if (updatedCategory == null)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return NoContent();
@@ -78,31 +71,20 @@ namespace AngularWithASP.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
-            _context.Category.Add(category);
-            await _context.SaveChangesAsync();
+            var userId = User.FindFirstValue("UserId");
 
-            return CreatedAtAction("GetCategory", new { id = category.Id }, category);
+            var createdCategory = await _categoriesService.AddCategoryAsync(userId, category);
+
+            return CreatedAtAction(nameof(GetCategory), new { id = createdCategory.Id }, createdCategory);
         }
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(long id)
         {
-            var category = await _context.Category.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            _context.Category.Remove(category);
-            await _context.SaveChangesAsync();
-
+            var success = await _categoriesService.DeleteCategoryAsync(id);
+            if (!success) return NotFound();
             return NoContent();
-        }
-
-        private bool CategoryExists(long id)
-        {
-            return _context.Category.Any(e => e.Id == id);
         }
     }
 }

@@ -10,6 +10,7 @@ using AngularWithASP.Server.Data;
 using System.Runtime.CompilerServices;
 using Microsoft.OpenApi.Any;
 using AngularWithASP.Server.Auth;
+using System.Security.Claims;
 
 namespace AngularWithASP.Server.Services;
 
@@ -28,7 +29,8 @@ public class TransactionsChartsService : ITransactionsChartsService
     }
 
     public async Task<List<TransactionsChart>> GetTransactionsChartAsync(string userId)
-    { 
+    {
+
         var incomeTransactionsData = await _context.Transactions
             .Where(t => t.Amount >= 0 && t.UserId == userId)
             .Select(t => new TransactionsChartData { date = t.Date, amount = t.Amount })
