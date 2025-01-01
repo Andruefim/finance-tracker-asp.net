@@ -2,6 +2,8 @@
 using AngularWithASP.Server.Models;
 using AngularWithASP.Server.Data;
 using Microsoft.AspNetCore.Http.HttpResults;
+using System.Linq.Expressions;
+using AngularWithASP.Server.Extensions;
 
 namespace AngularWithASP.Server.Services;
 
@@ -14,6 +16,7 @@ public interface ICategoriesService
     Task<bool> DeleteCategoryAsync(long id);
 }
 
+
 public class CategoriesService : ICategoriesService
 {
     private readonly ApplicationDbContext _context;
@@ -25,7 +28,7 @@ public class CategoriesService : ICategoriesService
     public async Task<IEnumerable<Category>> GetCategoriesAsync(string userId)
     {
         return await _context.Categories
-            .Where(c => c.UserId == userId)
+            .ByUserId(userId)
             .ToListAsync();
     }
 

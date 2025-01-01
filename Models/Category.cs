@@ -1,6 +1,8 @@
-﻿namespace AngularWithASP.Server.Models;
+﻿using AngularWithASP.Server.Interfaces;
 
-public class Category
+namespace AngularWithASP.Server.Models;
+
+public class Category : IUserOwned
 {
     public long Id { get; set; }
     public string? Name { get; set; }

@@ -1,6 +1,8 @@
-﻿namespace AngularWithASP.Server.Models;
+﻿using AngularWithASP.Server.Interfaces;
 
-public class Transaction
+namespace AngularWithASP.Server.Models;
+
+public class Transaction : IUserOwned
 {
     public long Id { get; set; }
     public string? Date { get; set; }
