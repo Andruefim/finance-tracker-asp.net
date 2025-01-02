@@ -11,36 +11,19 @@ public class ValidationResult
 public static class ModelValidator
 {
     public static List<ValidationResult> Validate(object model)
-    { 
-        var results = new List<ValidationResult>();
-
+    {
         if (model == null) 
             throw new ArgumentNullException(nameof(model));
 
-        var properties = model.GetType().GetProperties();
+        var results = from property in model.GetType().GetProperties()
+                      from attribute in property.GetCustomAttributes(typeof(ValidationAttribute), true).OfType<ValidationAttribute>()
+                      where !attribute.IsValid(property.GetValue(model))
+                      select new ValidationResult
+                      {
+                          Property = property.Name,
+                          ErrorMessage = attribute.ErrorMessage
+                      };
 
-        foreach (var property in properties)
-        {
-            foreach (var attribute in property.GetCustomAttributes(typeof(ValidationAttribute), true))
-            {
-                if (attribute is ValidationAttribute validationAttribute)
-                {
-                    var value = property.GetValue(model);
-
-                    if (!validationAttribute.IsValid(value))
-                    {
-                        results.Add(new ValidationResult
-                        {
-                            Property = property.Name,
-                            ErrorMessage = validationAttribute.ErrorMessage
-                        });
-                       
-                    }
-                }
-
-            }
-        }
-        return results;
-
+        return results.ToList();
     }
 }
