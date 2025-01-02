@@ -31,7 +31,7 @@ namespace AngularWithASP.Server.Controllers
         {
 
             var userId = User.FindFirstValue("UserId");
-            Console.WriteLine($"Retrieved UserId: {userId}");
+
             return await _context.Transactions
                 .Where(x => x.UserId == userId)
                 .ToListAsync();
@@ -87,6 +87,11 @@ namespace AngularWithASP.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Transaction>> PostTransaction(Transaction transaction)
         {
+            var validationResults = ModelValidator.Validate(transaction);
+
+            if (validationResults.Any()) { 
+                return BadRequest(validationResults);
+            }
 
             var userId = User.FindFirstValue("UserId");
 
