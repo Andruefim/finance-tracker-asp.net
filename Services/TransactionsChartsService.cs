@@ -11,6 +11,8 @@ using System.Runtime.CompilerServices;
 using Microsoft.OpenApi.Any;
 using AngularWithASP.Server.Auth;
 using System.Security.Claims;
+using AngularWithASP.Server.Strategies;
+using AngularWithASP.Server.Interfaces;
 
 namespace AngularWithASP.Server.Services;
 
@@ -30,56 +32,48 @@ public class TransactionsChartsService : ITransactionsChartsService
 
     public async Task<List<TransactionsChart>> GetTransactionsChartAsync(string userId)
     {
+        var resolver = new TransactionsChartDataResolver(_context);
 
-        var incomeTransactionsData = await _context.Transactions
-            .Where(t => t.Amount >= 0 && t.UserId == userId)
-            .Select(t => new TransactionsChartData { date = t.Date, amount = t.Amount })
-            .ToListAsync();
-
-        var expensesTransactionsData = await _context.Transactions
-            .Where(t => t.Amount <= 0 && t.UserId == userId)
-            .Select(t => new TransactionsChartData { date = t.Date, amount = Math.Abs(t.Amount) })
-            .ToListAsync();
-
-
-        return new List<TransactionsChart>
-        {
-            new TransactionsChart { Type = "Income", Data = incomeTransactionsData },
-            new TransactionsChart { Type = "Expenses", Data = expensesTransactionsData },
-        };
+        return
+        [
+            new ()
+            { 
+                Type = nameof(TransactionDataType.Income), 
+                Data = await resolver
+                    .GetStrategy(TransactionDataType.Income)
+                    .CreateTransactionsChartData(userId)
+            },
+            new ()
+            { 
+                Type = nameof(TransactionDataType.Expenses), 
+                Data = await resolver
+                    .GetStrategy(TransactionDataType.Expenses)
+                    .CreateTransactionsChartData(userId)
+            },
+        ];
     }
 
     public async Task<List<ExpensesChart>> GetExpensesChartAsync(string userId)
     {
-        var expensesChartData = new List<ExpensesChart>();
-
         if (_context.Transactions == null)
         {
-            return expensesChartData;
+            return [];
         }
 
         // Use LINQ to get ExpensesChart data list
-        var categories = await _context.Transactions
+        var expensesChartData = await _context.Transactions
                             .Where(t => t.UserId == userId)
                             .Select(t => t.Category)
                             .Distinct()
-                            .ToListAsync();
-
-
-        foreach (var category in categories)
-        {
-            expensesChartData
-                .Add(
-                    new ExpensesChart
-                    {
-                        Category = category,
-                        Amount = _context.Transactions
+                            .Select(category => new ExpensesChart
+                            {
+                                Category = category,
+                                Amount = _context.Transactions
                                 .Where(t => t.UserId == userId)
                                 .Where(t => t.Category == category && t.Amount < 0)
                                 .Sum(t => Math.Abs(t.Amount))
-                    }
-                );
-        }
+                            })
+                            .ToListAsync();
 
         return expensesChartData;
     }
