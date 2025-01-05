@@ -13,6 +13,8 @@ using AngularWithASP.Server.Auth;
 using System.Security.Claims;
 using AngularWithASP.Server.Strategies;
 using AngularWithASP.Server.Interfaces;
+using AngularWithASP.Server.Extensions;
+using AngularWithASP.Server.Expressions;
 
 namespace AngularWithASP.Server.Services;
 
@@ -62,16 +64,17 @@ public class TransactionsChartsService : ITransactionsChartsService
 
         // Use LINQ to get ExpensesChart data list
         var expensesChartData = await _context.Transactions
-                            .Where(t => t.UserId == userId)
+                            .ByUserId(userId)
                             .Select(t => t.Category)
                             .Distinct()
                             .Select(category => new ExpensesChart
                             {
                                 Category = category,
                                 Amount = _context.Transactions
-                                .Where(t => t.UserId == userId)
-                                .Where(t => t.Category == category && t.Amount < 0)
-                                .Sum(t => Math.Abs(t.Amount))
+                                .ByUserId(userId)
+                                .Where(t => t.Category == category)
+                                .Where(TransactionExpressions.IsExpenseTransaction())
+                                .Sum(TransactionExpressions.ToAbsoluteAmount())
                             })
                             .ToListAsync();
 

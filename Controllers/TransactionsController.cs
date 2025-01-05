@@ -10,6 +10,7 @@ using AngularWithASP.Server.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using AngularWithASP.Server.Extensions;
 
 namespace AngularWithASP.Server.Controllers
 {
@@ -33,7 +34,7 @@ namespace AngularWithASP.Server.Controllers
             var userId = User.FindFirstValue("UserId");
 
             return await _context.Transactions
-                .Where(x => x.UserId == userId)
+                .ByUserId(userId)
                 .ToListAsync();
         }
 

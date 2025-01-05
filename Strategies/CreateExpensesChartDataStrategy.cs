@@ -1,4 +1,5 @@
 ﻿using AngularWithASP.Server.Data;
+using AngularWithASP.Server.Expressions;
 using AngularWithASP.Server.Extensions;
 using AngularWithASP.Server.Interfaces;
 using AngularWithASP.Server.Models;
@@ -21,7 +22,7 @@ public class CreateExpensesChartDataStrategy : ITransactionsChartDataStrategy
     {
         var transactionsData = await _context.Transactions
             .ByUserId(userId)
-            .Where(t => t.Amount <= 0)
+            .Where(TransactionExpressions.IsExpenseTransaction())
             .Select(t => new TransactionsChartData { date = t.Date, amount = Math.Abs(t.Amount) })
             .ToListAsync();
 
