@@ -25,7 +25,7 @@ public static class TransactionExpressions
         //return t => t.Amount < 0;
         var tParameter = Expression.Parameter(typeof(Transaction), "t");
         var amountProperty = Expression.Property(tParameter, nameof(Transaction.Amount));
-        var negativeAmount = Expression.LessThan(amountProperty, Expression.Constant(0));
+        var negativeAmount = Expression.LessThan(amountProperty, Expression.Constant(0L));
 
         return Expression.Lambda<Func<Transaction, bool>>(negativeAmount, tParameter);
     }
@@ -35,7 +35,7 @@ public static class TransactionExpressions
         //return t => t.Amount >= 0;
         var tParameter = Expression.Parameter(typeof(Transaction), "t");
         var amountProperty = Expression.Property(tParameter, nameof(Transaction.Amount));
-        var positiveAmount = Expression.GreaterThanOrEqual(amountProperty, Expression.Constant(0));
+        var positiveAmount = Expression.GreaterThanOrEqual(amountProperty, Expression.Constant(0L));
 
         return Expression.Lambda<Func<Transaction, bool>>(positiveAmount, tParameter);
 

@@ -21,8 +21,8 @@ public class ValidationAttributes
             if (value == null)
                 return false;
 
-            if (value is int amount)
-                return amount > 0;
+            if (value is long amount)
+                return Math.Abs(amount) > 0;
 
 
             return false;
