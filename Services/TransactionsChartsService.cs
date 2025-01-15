@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.OpenApi.Any;
 using AngularWithASP.Server.Auth;
 using System.Security.Claims;
-using AngularWithASP.Server.Strategies;
+using AngularWithASP.Server.Strategies.Transactions;
 using AngularWithASP.Server.Interfaces;
 using AngularWithASP.Server.Extensions;
 using AngularWithASP.Server.Expressions;

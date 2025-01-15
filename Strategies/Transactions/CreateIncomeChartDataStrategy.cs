@@ -5,16 +5,16 @@ using AngularWithASP.Server.Interfaces;
 using AngularWithASP.Server.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace AngularWithASP.Server.Strategies;
+namespace AngularWithASP.Server.Strategies.Transactions;
 
-public class CreateExpensesChartDataStrategy : ITransactionsChartDataStrategy
+public class CreateIncomeChartDataStrategy : ITransactionsChartDataStrategy
 {
     private readonly ApplicationDbContext _context;
 
-    public TransactionDataType Type => TransactionDataType.Expenses;
+    public TransactionDataType Type => TransactionDataType.Income;
 
-    public CreateExpensesChartDataStrategy(ApplicationDbContext context)
-    { 
+    public CreateIncomeChartDataStrategy(ApplicationDbContext context)
+    {
         _context = context;
     }
 
@@ -22,10 +22,11 @@ public class CreateExpensesChartDataStrategy : ITransactionsChartDataStrategy
     {
         var transactionsData = await _context.Transactions
             .ByUserId(userId)
-            .Where(TransactionExpressions.IsExpenseTransaction())
-            .Select(t => new TransactionsChartData { date = t.Date, amount = Math.Abs(t.Amount) })
+            .Where(TransactionExpressions.IsIncomeTransaction())
+            .Select(t => new TransactionsChartData { date = t.Date, amount = t.Amount })
             .ToListAsync();
 
         return transactionsData;
     }
 }
+

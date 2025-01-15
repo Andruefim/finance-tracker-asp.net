@@ -4,13 +4,15 @@ using AngularWithASP.Server.Data;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Linq.Expressions;
 using AngularWithASP.Server.Extensions;
+using AngularWithASP.Server.Interfaces;
+using AngularWithASP.Server.Strategies.Categories;
 
 namespace AngularWithASP.Server.Services;
 
 
 public interface ICategoriesService
 { 
-    Task<IEnumerable<Category>> GetCategoriesAsync(string userId);
+    Task<IEnumerable<CategoriesData>> GetCategoriesAsync(string userId);
     Task<Category> UpdateCategoryAsync(long id, Category category);
     Task<Category> AddCategoryAsync(string userId, Category category);
     Task<bool> DeleteCategoryAsync(long id);
@@ -25,11 +27,27 @@ public class CategoriesService : ICategoriesService
         _context = context;
     }
 
-    public async Task<IEnumerable<Category>> GetCategoriesAsync(string userId)
+    public async Task<IEnumerable<CategoriesData>> GetCategoriesAsync(string userId)
     {
-        return await _context.Categories
-            .ByUserId(userId)
-            .ToListAsync();
+        var resolver = new CategoriesDataResolver(_context);
+
+        return
+        [
+            new ()
+            { 
+                Type = nameof(CategoriesDataType.Income),
+                Data = await resolver
+                    .GetStrategy(CategoriesDataType.Income)
+                    .CreateCategoriesData(userId)
+            },
+            new ()
+            {
+                Type = nameof(CategoriesDataType.Expenses),
+                Data = await resolver
+                    .GetStrategy(CategoriesDataType.Expenses)
+                    .CreateCategoriesData(userId)
+            }
+        ];
     }
 
     public async Task<Category> UpdateCategoryAsync(long id, Category category)

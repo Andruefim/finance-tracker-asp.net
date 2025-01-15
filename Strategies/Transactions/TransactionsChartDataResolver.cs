@@ -3,7 +3,7 @@ using System.Reflection;
 using AngularWithASP.Server.Data;
 using AngularWithASP.Server.Interfaces;
 
-namespace AngularWithASP.Server.Strategies;
+namespace AngularWithASP.Server.Strategies.Transactions;
 
 public class TransactionsChartDataResolver
 {
@@ -12,7 +12,7 @@ public class TransactionsChartDataResolver
     private ConcurrentDictionary<TransactionDataType, ITransactionsChartDataStrategy> _strategies = new();
 
     public TransactionsChartDataResolver(ApplicationDbContext context)
-    { 
+    {
         _context = context;
 
         Init();
@@ -30,7 +30,7 @@ public class TransactionsChartDataResolver
         {
             var strategy = (ITransactionsChartDataStrategy)Activator.CreateInstance(type, _context);
 
-            if (strategy == null) 
+            if (strategy == null)
             {
                 continue;
             }
@@ -39,8 +39,9 @@ public class TransactionsChartDataResolver
         }
     }
 
-    public ITransactionsChartDataStrategy GetStrategy(TransactionDataType type) { 
-        if (_strategies.ContainsKey(type)) 
+    public ITransactionsChartDataStrategy GetStrategy(TransactionDataType type)
+    {
+        if (_strategies.ContainsKey(type))
             return _strategies[type];
 
         throw new NotImplementedException();
