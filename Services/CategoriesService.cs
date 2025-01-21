@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using AngularWithASP.Server.Extensions;
 using AngularWithASP.Server.Interfaces;
 using AngularWithASP.Server.Strategies.Categories;
+using System.Diagnostics;
 
 namespace AngularWithASP.Server.Services;
 
@@ -13,7 +14,7 @@ namespace AngularWithASP.Server.Services;
 public interface ICategoriesService
 { 
     Task<IEnumerable<CategoriesData>> GetCategoriesAsync(string userId);
-    Task<Category> UpdateCategoryAsync(long id, Category category);
+    Task<Category> UpdateCategoryAsync(long id, string userId, Category category);
     Task<Category> AddCategoryAsync(string userId, Category category);
     Task<bool> DeleteCategoryAsync(long id);
 }
@@ -50,12 +51,14 @@ public class CategoriesService : ICategoriesService
         ];
     }
 
-    public async Task<Category> UpdateCategoryAsync(long id, Category category)
+    public async Task<Category> UpdateCategoryAsync(long id, string userId, Category category)
     {
         if (id != category.Id)
         {
             return null;
         }
+
+        category.UserId = userId;
 
         _context.Entry(category).State = EntityState.Modified;
 

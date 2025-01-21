@@ -56,7 +56,9 @@ namespace AngularWithASP.Server.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(long id, Category category)
         {
-            var updatedCategory = await _categoriesService.UpdateCategoryAsync(id, category);
+            var userId = User.FindFirstValue("UserId");
+
+            var updatedCategory = await _categoriesService.UpdateCategoryAsync(id, userId, category);
 
             if (updatedCategory == null)
             {
