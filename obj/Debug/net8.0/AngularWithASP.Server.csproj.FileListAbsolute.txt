@@ -296,3 +296,5 @@ C:\Users\Andrey\Desktop\Angular- ASP.NET\AngularWithASP\AngularWithASP.Server\bi
 C:\Users\Andrey\Desktop\Angular- ASP.NET\AngularWithASP\AngularWithASP.Server\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\Andrey\Desktop\Angular- ASP.NET\AngularWithASP\AngularWithASP.Server\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\Andrey\Desktop\Angular- ASP.NET\AngularWithASP\AngularWithASP.Server\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\Andrey\Desktop\Angular- ASP.NET\AngularWithASP\AngularWithASP.Server\bin\Debug\net8.0\SendGrid.dll
+C:\Users\Andrey\Desktop\Angular- ASP.NET\AngularWithASP\AngularWithASP.Server\bin\Debug\net8.0\StarkbankEcdsa.dll

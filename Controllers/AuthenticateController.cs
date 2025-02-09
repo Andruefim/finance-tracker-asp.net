@@ -1,5 +1,7 @@
 ﻿using AngularWithASP.Server.Auth;
+using AngularWithASP.Server.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
@@ -13,18 +15,21 @@ namespace AngularWithASP.Server.Controllers
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<UserModel> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IEmailSender _sender;
         private readonly IConfiguration _configuration;
 
         public AuthenticateController(
-            UserManager<IdentityUser> userManager,
+            UserManager<UserModel> userManager,
             RoleManager<IdentityRole> roleManager,
+            IEmailSender emailSender,
             IConfiguration configuration)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _sender = emailSender;
         }
 
         [HttpPost("login")]
@@ -63,11 +68,11 @@ namespace AngularWithASP.Server.Controllers
                 return BadRequest("User already exists!");
             }
 
-            var user = new IdentityUser()
+            var user = new UserModel()
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
+                UserName = model.Username,
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -105,8 +110,65 @@ namespace AngularWithASP.Server.Controllers
             {
                 email = user.Email,
                 username = user.UserName,
-                userId = user.Id
+                userId = user.Id,
+                emailConfirmed = user.EmailConfirmed,
             });
+        }
+
+        [HttpPost("send-email-confirmation")]
+        public async Task<IActionResult> SendEmailConfirmation()
+        {
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+            if (userEmail == null)
+            {
+                return Unauthorized("Email claim is missing");
+            }
+
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            user.EmailConfirmationCode = code;
+            await _userManager.UpdateAsync(user);
+
+            var toEmail = userEmail;
+            var subject = "Sending with SendGrid";
+
+            var message = $"Your confirmation code is {code}.";
+            await _sender.SendEmailAsync(toEmail, subject, message);
+
+            return Ok("Email confirmation code was sent.");
+        }
+
+        [HttpPost("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail([FromBody] string code)
+        {
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+            if (userEmail == null)
+            { 
+                return Unauthorized("Email claim is missing");
+            }
+
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null)
+            { 
+                return NotFound("User not found");
+            }
+
+            if (code != user.EmailConfirmationCode) {
+                return BadRequest("Invalid confirmation code.");
+            }
+
+            user.EmailConfirmed = true;
+            user.EmailConfirmationCode = null;
+            await _userManager.UpdateAsync(user);
+
+            return Ok(new { emailConfirmed = true });
+            
         }
 
         private JwtSecurityToken GetToken(List<Claim> authClaims)

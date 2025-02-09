@@ -3,10 +3,12 @@ using AngularWithASP.Server.Data;
 using AngularWithASP.Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
+using AngularWithASP.Server.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -20,7 +22,7 @@ builder.Services.AddScoped<ITransactionsChartsService, TransactionsChartsService
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 
 // For Identity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<UserModel, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
@@ -47,6 +49,9 @@ builder.Services.AddAuthentication(options =>
         };
     }
 );
+
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -1,11 +1,12 @@
-﻿using AngularWithASP.Server.Models;
+﻿using AngularWithASP.Server.Auth;
+using AngularWithASP.Server.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace AngularWithASP.Server.Data;
 
-public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+public class ApplicationDbContext : IdentityDbContext<UserModel>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)

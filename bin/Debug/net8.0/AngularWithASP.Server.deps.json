@@ -10,11 +10,12 @@
         "dependencies": {
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.11",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "8.0.11",
-          "Microsoft.AspNetCore.SpaProxy": "8.0.11",
+          "Microsoft.AspNetCore.SpaProxy": "8.0.12",
           "Microsoft.EntityFrameworkCore.InMemory": "9.0.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "9.0.0",
           "Microsoft.EntityFrameworkCore.Tools": "9.0.0",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "8.0.7",
+          "SendGrid": "9.29.3",
           "Swashbuckle.AspNetCore": "6.6.2"
         },
         "runtime": {
@@ -646,11 +647,11 @@
           }
         }
       },
-      "Microsoft.AspNetCore.SpaProxy/8.0.11": {
+      "Microsoft.AspNetCore.SpaProxy/8.0.12": {
         "runtime": {
           "lib/net8.0/Microsoft.AspNetCore.SpaProxy.dll": {
-            "assemblyVersion": "8.0.11.0",
-            "fileVersion": "8.0.1124.52116"
+            "assemblyVersion": "8.0.12.0",
+            "fileVersion": "8.0.1224.60312"
           }
         }
       },
@@ -1833,6 +1834,26 @@
           }
         }
       },
+      "SendGrid/9.29.3": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3",
+          "starkbank-ecdsa": "1.3.3"
+        },
+        "runtime": {
+          "lib/netstandard2.0/SendGrid.dll": {
+            "assemblyVersion": "9.29.3.0",
+            "fileVersion": "9.29.3.0"
+          }
+        }
+      },
+      "starkbank-ecdsa/1.3.3": {
+        "runtime": {
+          "lib/netstandard2.1/StarkbankEcdsa.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "Swashbuckle.AspNetCore/6.6.2": {
         "dependencies": {
           "Microsoft.Extensions.ApiDescription.Server": "6.0.5",
@@ -2573,12 +2594,12 @@
       "path": "microsoft.aspnetcore.razor.language/6.0.24",
       "hashPath": "microsoft.aspnetcore.razor.language.6.0.24.nupkg.sha512"
     },
-    "Microsoft.AspNetCore.SpaProxy/8.0.11": {
+    "Microsoft.AspNetCore.SpaProxy/8.0.12": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-jwE/cg81t/FTZF1DOKpd90ztzZz6NNNHdo+vLUL4I2IzqL3e8Coo+2eR0KeD4ShbJm+3LNPXH9a6gYv/oP+aQQ==",
-      "path": "microsoft.aspnetcore.spaproxy/8.0.11",
-      "hashPath": "microsoft.aspnetcore.spaproxy.8.0.11.nupkg.sha512"
+      "sha512": "sha512-3FCqH7rdZVENLCSbBwiX9K034j5fUbqh8qk14Etj4pROGZGqH/nzlFZ+LdT/S2MtpWJSOUJLTT72Xk/Jf6+UVw==",
+      "path": "microsoft.aspnetcore.spaproxy/8.0.12",
+      "hashPath": "microsoft.aspnetcore.spaproxy.8.0.12.nupkg.sha512"
     },
     "Microsoft.Bcl.AsyncInterfaces/7.0.0": {
       "type": "package",
@@ -3076,6 +3097,20 @@
       "sha512": "sha512-v/GGlIj2dd7svplFmASWEueu62veKW0MrMtBaZ7QG8aJTSGv2yE+pgUGhXRcQ4nxNOEq/wLBrz1vkth/1SND7A==",
       "path": "nuget.versioning/6.11.0",
       "hashPath": "nuget.versioning.6.11.0.nupkg.sha512"
+    },
+    "SendGrid/9.29.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-nb/zHePecN9U4/Bmct+O+lpgK994JklbCCNMIgGPOone/DngjQoMCHeTvkl+m0Nglvm0dqMEshmvB4fO8eF3dA==",
+      "path": "sendgrid/9.29.3",
+      "hashPath": "sendgrid.9.29.3.nupkg.sha512"
+    },
+    "starkbank-ecdsa/1.3.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-OblOaKb1enXn+dSp7tsx9yjwV+/BEKM9jFhshIkZTwCk7LuTFTp+wSon6rFzuPiIiTGtvVWQNUw2slHjGktJog==",
+      "path": "starkbank-ecdsa/1.3.3",
+      "hashPath": "starkbank-ecdsa.1.3.3.nupkg.sha512"
     },
     "Swashbuckle.AspNetCore/6.6.2": {
       "type": "package",
