@@ -41,7 +41,7 @@ namespace AngularWithASP.Server.Migrations
                     b.Property<string>("EmailConfirmationCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("EmailConfirmed")
+                    b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")

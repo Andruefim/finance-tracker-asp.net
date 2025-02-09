@@ -130,10 +130,15 @@ namespace AngularWithASP.Server.Controllers
                 return NotFound("User not found");
             }
 
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var code = new Random().Next(10000, 999999).ToString();
 
             user.EmailConfirmationCode = code;
-            await _userManager.UpdateAsync(user);
+            var updateResult = await _userManager.UpdateAsync(user);
+
+            if (!updateResult.Succeeded)
+            {
+                return BadRequest(new { message = "Failed to save confirmation code", errors = updateResult.Errors });
+            }
 
             var toEmail = userEmail;
             var subject = "Sending with SendGrid";
@@ -141,11 +146,11 @@ namespace AngularWithASP.Server.Controllers
             var message = $"Your confirmation code is {code}.";
             await _sender.SendEmailAsync(toEmail, subject, message);
 
-            return Ok("Email confirmation code was sent.");
+            return Ok(new { confirmationSent = true, userCode = user.EmailConfirmationCode });
         }
 
         [HttpPost("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail([FromBody] string code)
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailModel confirmation)
         {
             var userEmail = User.FindFirstValue(ClaimTypes.Email);
             if (userEmail == null)
@@ -159,12 +164,15 @@ namespace AngularWithASP.Server.Controllers
                 return NotFound("User not found");
             }
 
-            if (code != user.EmailConfirmationCode) {
-                return BadRequest("Invalid confirmation code.");
+            Console.WriteLine("debugCode", confirmation.Code);
+            Console.WriteLine("debugEmailCode", user.EmailConfirmationCode);
+
+            if (confirmation.Code != user.EmailConfirmationCode) {
+                return BadRequest($"Invalid confirmation code.{confirmation.Code} is not {user.EmailConfirmationCode}");
             }
 
             user.EmailConfirmed = true;
-            user.EmailConfirmationCode = null;
+            //user.EmailConfirmationCode = null;
             await _userManager.UpdateAsync(user);
 
             return Ok(new { emailConfirmed = true });
