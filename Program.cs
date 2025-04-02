@@ -9,6 +9,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using AngularWithASP.Server.Auth;
+using AngularWithASP.Server.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -82,6 +83,7 @@ app.UseHttpsRedirection();
 // Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseLoggerMiddleware();
 
 app.MapControllers();
 
