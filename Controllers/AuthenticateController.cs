@@ -141,9 +141,9 @@ namespace AngularWithASP.Server.Controllers
             }
 
             var toEmail = userEmail;
-            var subject = "Finance tracker";
+            var subject = "Sending with SendGrid";
 
-            var message = $"We received your registration request. Verification code is {code}. Proceed with your application on the website.";
+            var message = $"Your confirmation code is {code}.";
             await _sender.SendEmailAsync(toEmail, subject, message);
 
             return Ok(new { confirmationSent = true, userCode = user.EmailConfirmationCode });

@@ -13,13 +13,13 @@ namespace AngularWithASP.Server.Middleware
         public LoggerMiddleware(RequestDelegate next, ILoggerFactory logFactory)
         {
             _next = next;
+            _logger = logFactory.CreateLogger("MyMiddleware");
 
-            _logger = logFactory.CreateLogger("LoggerMiddleware");
         }
 
         public Task Invoke(HttpContext httpContext)
         {
-            _logger.LogInformation(httpContext.GetEndpoint()?.DisplayName);
+            _logger.LogInformation("EndpointName" + httpContext.GetEndpoint()?.DisplayName);
 
             return _next(httpContext);
         }

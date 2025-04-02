@@ -15,7 +15,7 @@ using AngularWithASP.Server.Extensions;
 namespace AngularWithASP.Server.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/transactions")]
     [ApiController]
     public class TransactionsController : ControllerBase
     {
