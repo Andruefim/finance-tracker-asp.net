@@ -18,101 +18,44 @@ namespace AngularWithASP.Server.Controllers
         private readonly UserManager<UserModel> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailSender _sender;
-        private readonly IConfiguration _configuration;
+        private readonly IAuthenticateService _authenticateService;
 
         public AuthenticateController(
-            UserManager<UserModel> userManager,
-            RoleManager<IdentityRole> roleManager,
-            IEmailSender emailSender,
-            IConfiguration configuration)
+                UserManager<UserModel> userManager,
+                RoleManager<IdentityRole> roleManager,
+                IAuthenticateService authenticateService,
+                IEmailSender emailSender
+            )
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            _configuration = configuration;
             _sender = emailSender;
+            _authenticateService = authenticateService;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password)) {
-                return Unauthorized("Invalid email or password");
-            }
+            var loginResponse = await _authenticateService.LoginAsync(model);
 
-            var authClaims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim("UserId", user.Id)
-            };
-
-            var token = GetToken(authClaims);
-
-            return Ok(new 
-            { 
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = token.ValidTo,
-                email = user.Email,
-                username = user.UserName,
-                userId = user.Id,
-            });
+            return Ok(loginResponse);
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            var userExists = await _userManager.FindByEmailAsync(model.Email);
-            if (userExists != null) {
-                return BadRequest("User already exists!");
-            }
+            var registerResponse = await _authenticateService.RegisterAsync(model);
 
-            var user = new UserModel()
-            {
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username,
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
-
-            return Ok(new { message = "User registered successfully" });
+            return Ok(registerResponse);
         }
 
         [HttpGet("user")]
         public async Task<IActionResult> GetUser()
         {
-            if (User.Identity is null || !User.Identity.IsAuthenticated)
-            {
-                return Unauthorized("User is not authenticated");
-            }
-
-            // Get the user's email from the claims
-            var userEmail = User.FindFirstValue(ClaimTypes.Email);
-            if (userEmail == null) 
-            {
-                return Unauthorized("Email claim is missing");
-            }
-
-            // Fetch the user from the database
-            var user = await _userManager.FindByEmailAsync(userEmail);
-            if (user == null) 
-            { 
-                return NotFound("User not found");
-            }
+            var user = await _authenticateService.GetUserAsync(User);
 
             // Return the user details
-            return Ok(new
-            {
-                email = user.Email,
-                username = user.UserName,
-                userId = user.Id,
-                emailConfirmed = user.EmailConfirmed,
-            });
+            return Ok(user);
         }
 
         [HttpPost("send-email-confirmation")]
@@ -177,21 +120,6 @@ namespace AngularWithASP.Server.Controllers
 
             return Ok(new { emailConfirmed = true });
             
-        }
-
-        private JwtSecurityToken GetToken(List<Claim> authClaims)
-        {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddHours(3),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-            );
-
-            return token;
         }
     }
 }
